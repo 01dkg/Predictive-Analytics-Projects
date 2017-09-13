@@ -37,3 +37,9 @@ train['ip'] = train.ip.map(train.groupby('ip').size() / len(train))
 test = train[train_rows:np.shape(train)[0]]
 train = train[0:train_rows]
 del train_rows
+scaler = StandardScaler()
+scaler.fit(train)
+train_dm = scaler.transform(train)
+# free memory
+del train
+gc.collect()
