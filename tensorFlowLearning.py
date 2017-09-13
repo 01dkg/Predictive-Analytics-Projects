@@ -30,3 +30,10 @@ def timeEncoding(df):
 
 train = timeEncoding(train)
 test = timeEncoding(test)
+
+train_rows = np.shape(train)[0]
+train = train.append(pd.DataFrame(data = test))
+train['ip'] = train.ip.map(train.groupby('ip').size() / len(train))
+test = train[train_rows:np.shape(train)[0]]
+train = train[0:train_rows]
+del train_rows
