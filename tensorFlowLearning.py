@@ -53,4 +53,10 @@ learning_rate = 0.004
 
 nOf_features = len(train_dm_non_anomalystic[0])
 nOf_neurons_first_layer = 6 
-nOf_neurons_second_layer = 3 
+nOf_neurons_second_layer = 3
+We1 = tf.Variable(tf.random_normal([nOf_features, nOf_neurons_first_layer], dtype=tf.float32))
+be1 = tf.Variable(tf.zeros([nOf_neurons_first_layer]))
+
+We2 = tf.Variable(tf.random_normal([nOf_neurons_first_layer, nOf_neurons_second_layer], dtype=tf.float32))
+be2 = tf.Variable(tf.zeros([nOf_neurons_second_layer]))
+
