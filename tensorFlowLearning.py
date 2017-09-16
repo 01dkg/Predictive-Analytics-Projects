@@ -42,3 +42,7 @@ scaler.fit(train)
 train_dm = scaler.transform(train)
 del train
 gc.collect()
+
+train_dm_non_anomalystic = train_dm[np.where(response == 0)[0]]
+train_dm_anomalystic = train_dm[np.where(response == 1)[0]]
+train_dm_non_anomalystic, validation_dm_non_anomalystic = train_test_split(train_dm_non_anomalystic, test_size=0.2)
