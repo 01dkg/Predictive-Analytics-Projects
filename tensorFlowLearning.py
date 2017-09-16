@@ -51,6 +51,6 @@ niter =2200 if is_on_kaggle else 1500
 batch_size = 500000 if np.shape(train_dm_non_anomalystic)[0] > 1000000 else int(np.shape(train_dm_non_anomalystic)[0] / 5)
 learning_rate = 0.004
 
-number_of_features = len(train_dm_non_anomalystic[0])
-number_of_neurons_first_layer = 6 
-number_of_neurons_second_layer = 3 
+nOf_features = len(train_dm_non_anomalystic[0])
+nOf_neurons_first_layer = 6 
+nOf_neurons_second_layer = 3 
