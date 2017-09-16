@@ -46,3 +46,11 @@ gc.collect()
 train_dm_non_anomalystic = train_dm[np.where(response == 0)[0]]
 train_dm_anomalystic = train_dm[np.where(response == 1)[0]]
 train_dm_non_anomalystic, validation_dm_non_anomalystic = train_test_split(train_dm_non_anomalystic, test_size=0.2)
+
+niter =2200 if is_on_kaggle else 1500
+batch_size = 500000 if np.shape(train_dm_non_anomalystic)[0] > 1000000 else int(np.shape(train_dm_non_anomalystic)[0] / 5)
+learning_rate = 0.004
+
+number_of_features = len(train_dm_non_anomalystic[0])
+number_of_neurons_first_layer = 6 
+number_of_neurons_second_layer = 3 
