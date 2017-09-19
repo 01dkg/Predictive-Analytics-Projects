@@ -67,4 +67,11 @@ Wd2 = tf.Variable(tf.random_normal([nOf_neurons_first_layer, nOf_features], dtyp
 bd2 = tf.Variable(tf.zeros([nOf_features]))
 
 X = tf.placeholder(dtype=tf.float32, shape=[None, nOf_features])
+encoding = tf.nn.tanh(tf.matmul(X, We1) + be1)
+encoding = tf.matmul(encoding, We2) + be2
+decoding = tf.nn.tanh(tf.matmul(encoding, Wd1) + bd1)
+decoded = tf.matmul(decoding, Wd2) + bd2
+
+loss = tf.sqrt(tf.reduce_mean(tf.square(tf.subtract(X, decoded))))
+train_step = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
