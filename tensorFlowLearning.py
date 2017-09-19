@@ -87,3 +87,14 @@ loss_valid = []
 loss_anomaly = []
 for i in range(niter):
     if batch_size > 0:
+    	for j in range(np.shape(train_dm_non_anomalystic)[0] // batch_size):
+            batch_data = get_batch(train_dm_non_anomalystic, j, batch_size)
+            sess.run(train_step, feed_dict={X: batch_data})
+    else:
+        sess.run(train_step, feed_dict={X: train_dm_non_anomalystic})
+    lt = sess.run(loss, feed_dict={X: train_dm_non_anomalystic})
+    lv = sess.run(loss, feed_dict={X: validation_dm_non_anomalystic})
+    la = sess.run(loss, feed_dict={X: train_dm_anomalystic})
+    loss_train.append(lt)
+    loss_valid.append(lv)
+    loss_anomaly.append(la)
