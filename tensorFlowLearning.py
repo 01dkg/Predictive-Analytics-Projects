@@ -75,3 +75,15 @@ decoded = tf.matmul(decoding, Wd2) + bd2
 loss = tf.sqrt(tf.reduce_mean(tf.square(tf.subtract(X, decoded))))
 train_step = tf.train.RMSPropOptimizer(learning_rate).minimize(loss)
 
+def get_batch(data, i, size):
+    return data[range(i*size, (i+1)*size)]
+
+
+tf.set_random_seed(1)
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+loss_train = []
+loss_valid = []
+loss_anomaly = []
+for i in range(niter):
+    if batch_size > 0:
