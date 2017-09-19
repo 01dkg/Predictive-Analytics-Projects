@@ -60,11 +60,11 @@ be1 = tf.Variable(tf.zeros([nOf_neurons_first_layer]))
 We2 = tf.Variable(tf.random_normal([nOf_neurons_first_layer, nOf_neurons_second_layer], dtype=tf.float32))
 be2 = tf.Variable(tf.zeros([nOf_neurons_second_layer]))
 
-Wd1 = tf.Variable(tf.random_normal([number_of_neurons_second_layer, number_of_neurons_first_layer], dtype=tf.float32))
-bd1 = tf.Variable(tf.zeros([number_of_neurons_first_layer]))
+Wd1 = tf.Variable(tf.random_normal([nOf_neurons_second_layer, nOf_neurons_first_layer], dtype=tf.float32))
+bd1 = tf.Variable(tf.zeros([nOf_neurons_first_layer]))
 
-Wd2 = tf.Variable(tf.random_normal([number_of_neurons_first_layer, number_of_features], dtype=tf.float32))
-bd2 = tf.Variable(tf.zeros([number_of_features]))
+Wd2 = tf.Variable(tf.random_normal([nOf_neurons_first_layer, nOf_features], dtype=tf.float32))
+bd2 = tf.Variable(tf.zeros([nOf_features]))
 
-X = tf.placeholder(dtype=tf.float32, shape=[None, number_of_features])
+X = tf.placeholder(dtype=tf.float32, shape=[None, nOf_features])
 
