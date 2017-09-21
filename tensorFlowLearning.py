@@ -112,3 +112,10 @@ plt.ylabel('loss')
 plt.xlabel('niter')
 plt.legend(['train (w/o anomaly)', 'valid (w/o anomaly)', 'anomalistic data'], loc='upper right')
 plt.gcf().savefig('learning_curves.png') if is_on_kaggle else plt.show()
+np.random.seed(1)
+sampled_train_dm_non_anomalystic = train_dm_non_anomalystic[np.random.choice(len(train_dm_non_anomalystic), 5 * np.shape(train_dm_anomalystic)[0], replace=False)]
+non_anomalystic_reconstructed = sess.run(decoded, feed_dict={X: sampled_train_dm_non_anomalystic})
+anomalystic_reconstructed = sess.run(decoded, feed_dict={X: train_dm_anomalystic})
+
+non_anomalystic_reconstructed_loss = np.sqrt(np.mean(np.square(sampled_train_dm_non_anomalystic - non_anomalystic_reconstructed), axis=1))
+anomalystic_reconstructed_loss = np.sqrt(np.mean(np.square(train_dm_anomalystic - anomalystic_reconstructed), axis=1))
