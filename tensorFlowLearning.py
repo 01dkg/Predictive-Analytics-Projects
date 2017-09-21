@@ -102,3 +102,13 @@ for i in range(niter):
         print('iteration {0}: loss train = {1:.4f}, loss valid = {2:.4f}, loss anomaly = {3:.4f}'.format(i, lt, lv, la))
 
 #Final test and outputs
+plt.figure()
+plt.clf()
+plt.cla()
+plt.semilogy(loss_train)
+plt.semilogy(loss_valid)
+plt.semilogy(loss_anomaly)
+plt.ylabel('loss')
+plt.xlabel('niter')
+plt.legend(['train (w/o anomaly)', 'valid (w/o anomaly)', 'anomalistic data'], loc='upper right')
+plt.gcf().savefig('learning_curves.png') if is_on_kaggle else plt.show()
