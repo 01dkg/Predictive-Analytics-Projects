@@ -100,3 +100,5 @@ for i in range(niter):
     loss_anomaly.append(la)
     if (i % 100 == 0):
         print('iteration {0}: loss train = {1:.4f}, loss valid = {2:.4f}, loss anomaly = {3:.4f}'.format(i, lt, lv, la))
+
+#Final test and outputs
