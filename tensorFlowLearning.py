@@ -128,3 +128,8 @@ gc.collect()
 
 test_reconstructed = sess.run(decoded, feed_dict={X: test_dm})
 test_reconstructed_loss = np.sqrt(np.mean(np.square(test_reconstructed - test_dm), axis=1))
+def distribute_in_range(data, min, max):
+    max_data = np.max(data)
+    a = (max - min) / (max_data - np.min(data))
+    b = max - a * max_data
+    return a * data + b
