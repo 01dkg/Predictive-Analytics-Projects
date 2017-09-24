@@ -123,3 +123,8 @@ del train_dm_non_anomalystic, train_dm_anomalystic
 gc.collect()
 
 test_dm = scaler.transform(test)
+del test
+gc.collect()
+
+test_reconstructed = sess.run(decoded, feed_dict={X: test_dm})
+test_reconstructed_loss = np.sqrt(np.mean(np.square(test_reconstructed - test_dm), axis=1))
