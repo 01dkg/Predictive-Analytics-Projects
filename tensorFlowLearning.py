@@ -45,7 +45,7 @@ gc.collect()
 
 train_dm_non_anomaly = train_dm[np.where(response == 0)[0]]
 train_dm_anomaly = train_dm[np.where(response == 1)[0]]
-train_dm_non_anomaly, validation_dm_non_anomaly = train_test_split(train_dm_non_anomaly, test_size=0.2)
+train_dm_non_anomaly, valid_dm_non_anomaly = train_test_split(train_dm_non_anomaly, test_size=0.2)
 
 niter =2200 if is_on_kaggle else 1500
 batch_size = 500000 if np.shape(train_dm_non_anomaly)[0] > 1000000 else int(np.shape(train_dm_non_anomaly)[0] / 5)
@@ -93,7 +93,7 @@ for i in range(niter):
     else:
         sess.run(train_step, feed_dict={X: train_dm_non_anomaly})
     lt = sess.run(loss, feed_dict={X: train_dm_non_anomaly})
-    lv = sess.run(loss, feed_dict={X: validation_dm_non_anomaly})
+    lv = sess.run(loss, feed_dict={X: valid_dm_non_anomaly})
     la = sess.run(loss, feed_dict={X: train_dm_anomaly})
     loss_train.append(lt)
     loss_valid.append(lv)
