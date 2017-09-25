@@ -114,11 +114,11 @@ plt.legend(['train (w/o anomaly)', 'valid (w/o anomaly)', 'anomalistic data'], l
 plt.gcf().savefig('learning_curves.png') if is_on_kaggle else plt.show()
 np.random.seed(1)
 sampled_train_dm_non_anomaly = train_dm_non_anomaly[np.random.choice(len(train_dm_non_anomaly), 5 * np.shape(train_dm_anomaly)[0], replace=False)]
-non_anomaly_reconstructed = sess.run(decoded, feed_dict={X: sampled_train_dm_non_anomaly})
-anomaly_reconstructed = sess.run(decoded, feed_dict={X: train_dm_anomaly})
+non_anomaly_restruct = sess.run(decoded, feed_dict={X: sampled_train_dm_non_anomaly})
+anomaly_restruct = sess.run(decoded, feed_dict={X: train_dm_anomaly})
 
-non_anomaly_reconstructed_loss = np.sqrt(np.mean(np.square(sampled_train_dm_non_anomaly - non_anomaly_reconstructed), axis=1))
-anomaly_reconstructed_loss = np.sqrt(np.mean(np.square(train_dm_anomaly - anomaly_reconstructed), axis=1))
+non_anomaly_restruct_loss = np.sqrt(np.mean(np.square(sampled_train_dm_non_anomaly - non_anomaly_restruct), axis=1))
+anomaly_restruct_loss = np.sqrt(np.mean(np.square(train_dm_anomaly - anomaly_restruct), axis=1))
 del train_dm_non_anomaly, train_dm_anomaly
 gc.collect()
 
@@ -126,13 +126,13 @@ test_dm = scaler.transform(test)
 del test
 gc.collect()
 
-test_reconstructed = sess.run(decoded, feed_dict={X: test_dm})
-test_reconstructed_loss = np.sqrt(np.mean(np.square(test_reconstructed - test_dm), axis=1))
+test_restruct = sess.run(decoded, feed_dict={X: test_dm})
+test_restruct_loss = np.sqrt(np.mean(np.square(test_restruct - test_dm), axis=1))
 def distribute_in_range(data, min, max):
     max_data = np.max(data)
     a = (max - min) / (max_data - np.min(data))
     b = max - a * max_data
     return a * data + b
-test_prediction['is_attributed'] = distribute_in_range(test_reconstructed_loss, 0, 1)
+test_prediction['is_attributed'] = distribute_in_range(test_restruct_loss, 0, 1)
 
 test_prediction.to_csv('test_prediction.csv', index=False)
