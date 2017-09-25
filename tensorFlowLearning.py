@@ -133,3 +133,6 @@ def distribute_in_range(data, min, max):
     a = (max - min) / (max_data - np.min(data))
     b = max - a * max_data
     return a * data + b
+test_prediction['is_attributed'] = distribute_in_range(test_reconstructed_loss, 0, 1)
+
+test_prediction.to_csv('test_prediction.csv', index=False)
