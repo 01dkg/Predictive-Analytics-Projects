@@ -4,6 +4,10 @@ output:
   html_document:
     df_print: paged
   pdf_document: default
+  html_notebook: 
+    number_sections: yes
+    theme: journal
+    toc: yes
 ---
 
  
