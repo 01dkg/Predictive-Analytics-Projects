@@ -1,0 +1,414 @@
+---
+title: "Data Mining for Business Analytics"
+author: "Deepak Kumar Gupta & Shruti Goyal"
+date: "Due Date: Feb 15, 2017"
+output:
+  html_notebook:
+    fig_caption: yes
+    fig_height: 12
+    fig_width: 14
+    number_sections: yes
+    theme: cerulean
+    toc: yes
+  pdf_document:
+    fig_caption: yes
+    fig_height: 6.5
+    fig_width: 16
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+  html_document:
+    fig_caption: yes
+    fig_height: 8
+    fig_width: 10
+    number_sections: yes
+    theme: readable
+    toc: yes
+---
+
+----
+
+#Load the oj.csv data into R.
+```{r}
+options(warn = 1)
+oj <- read.csv(file="oj.csv",head=TRUE,sep=",")
+summary(oj)
+```
+#How many records and how many attributes are in the orange juice dataset?
+
+There are 28947 records and 17 attributes.
+```{r}
+#Method 1
+dim(oj)
+
+#Method 2
+nrow(oj)
+ncol(oj)
+names(oj)
+```
+#What is the mean, standard deviation and range of the price of orange juice?
+```{r}
+mean(oj$price)
+sd(oj$price)
+range(oj$price)
+```
+
+#What is the median of the 'log of number of units sold' (logmove)?
+Median is 9.03408
+```{r}
+median(oj$logmove)
+```
+
+#What are the names of the 3 orange juice brands?
+* Juice Brands are: 
+  1. Dominicks
+  2. Minute.maid
+  3. Tropicana
+```{r}
+#Method 1
+unique(oj$brand)
+
+#Method 2
+juicebrand<- factor(oj$brand)
+table(juicebrand)
+```
+
+# Create a histogram of prices for each brand of orange juice.
+
+##Method 1: using hist()
+```{r}
+library(lattice)
+par(mfrow = c(3,1))
+hist(oj$price[oj$brand=='tropicana'],main=" Price of Tropicana Orange Juice"
+       ,xlab="Price",breaks =50, col = 'brown')
+hist(oj$price[oj$brand=='minute.maid'],main=" Price of Mindute Maid Orange Juice"
+       ,xlab="Price",breaks =50,col='Red')
+hist(oj$price[oj$brand=='dominicks'],main=" Price of Dominicks Orange Juice"
+     ,xlab="Price",breaks =50, col = 'blue')
+```
+
+##Method 2: Using ggplot2()
+```{r results='hide', message=FALSE, warning=FALSE}
+library(ggplot2)
+par(mfrow = c(3,3))
+ggplot(oj, aes(x= oj$price, fill = brand)) + geom_histogram(binwidth=0.25,position = "dodge")+
+ylab("Count") + xlab("Orange Juice Price") + ggtitle("Prices of Orange Juice and 
+                                                     Count of Each Type")
+
+```
+
+##Method 3: Using histogram()
+```{r results='hide', message=FALSE, warning=FALSE}
+histogram(~price|brand,data=oj,layout=c(3,1))
+densityplot(~price|brand,data=oj,layout=c(3,1),plot.points=FALSE)
+```
+
+# Generate a boxplot, which includes a separate plot for the prices of each brand
+```{r}
+boxplot(oj$price~oj$brand, data=oj, notch=TRUE, 
+  col=(c("gold","darkgreen")),main="Boxplot of Prices for each Orange Juince brand",
+  xlab="Price and Brand name")
+```
+
+#What does the boxplot tell us about the relative prices of each brand?
+
+- Dominick's has outlier less than 3/2 times of lower quartile. one outlier is more than 3/2 time of upper
+quartile. Also, majority of price range of Dominick's is more than the median value and it has range of 1.6 to 2 (approx)
+
+- Minute.maid has about 5 outliers less than 3/2 times of lower quartile.
+
+- Tropicana has few outliers closer to the minimum of lower quartile whiskers. Overall, with the help of boxplot, one can interpret the distribution of figure around quartile of a median value. That will help a user to identify outlier values and then perform detailed data analysis to find trends and pattern among datasets.
+
+#Generate a scatterplot of the logmove compared to price, and color the points according to their brand 
+
+## Method 1: Using pairs()
+```{r results='hide', message=FALSE, warning=FALSE}
+library(scatterplot3d)
+attach(oj)
+pairs(~oj$logmove+oj$price, pch=21,
+      main="Scatter plot of Log of the number of units Sold vs Price of Orange Juice",
+      bg= c("red", "blue", "yellow")[unclass(oj$brand)])
+```
+
+## Method 2: Using plot()
+```{r results='hide', message=FALSE, warning=FALSE}
+plot(oj$logmove,oj$price, xlab="Units Sold",ylab="Price",pch=21,col=topo.colors(3)
+     [unclass(oj$brand)])
+legend("bottomleft", inset=0.01, title="Brands",c("Tropicana","Minute Maid","Dominicks"),
+       fill=topo.colors(3), horiz=FALSE)
+```
+
+##Method 3: Using plotly()
+```{r results='hide', message=FALSE, warning=FALSE}
+library(plotly)
+Sys.setenv("plotly_username"="deepak91g")
+Sys.setenv("plotly_api_key"="Gb3tMDu2UzMuGdXsMB9n")
+
+#p <- plot_ly(data = oj, x = ~logmove, y = ~price, color = ~brand, colors = "Set1")
+
+# Create a shareable link to your chart
+# Set up API credentials: https://plot.ly/r/getting-started
+#chart_link = plotly_POST(p, filename="colorbrewer")
+#chart_link
+```
+![Scatter Plot using Ploty library](E:/Smurfit/Semester 2/DM/R/Data-Mining/plotly_scatter.png)
+
+#Based on what you observe in the scatterplot, what can we say about the price of each brand of chilled orange juice and the volume of sales?
+
+* Scatterplot helps one to identify the relation between two variables if one changes then how the change in other is
+reflected. It could be no change, increase or decrease in the value. Similarly, for orange juice data, the scatterplot
+of Units Sold vs Price shows that the Price of Tropicana juice is lowered compared to other two, and sold
+the number of units compared to Minute Maid and Dominicks.
+
+* Dominicks has sold units in range of 7-11, but its price is highest among all three brands. On the other hand,
+minute maid unit sold is between 8-12, and average price per unit is 2.5.
+
+* Overall, Maximum price of a unit juice is 4.0 and minimum price is approx 1.0. Max unit sold is 14 and
+minmum number of unit sold is 4.
+
+#Calculate the mean price of orange juice sold each week, and create aline plot of this timeseries. 
+
+## Method 1: using tapply()
+```{r}
+xnames <- tapply(oj$price,oj$week,FUN=mean,na.rm=TRUE)
+plot(tapply(oj$price,oj$week,FUN=mean,na.rm=TRUE),xaxt="n",pch=16,type="l",
+     col="green",xlab = "Week",ylab="meanweeklyprice")
+```
+##Method 2: using aggreagate()
+```{r}
+meanweeklyprice <- aggregate(oj[ ,6], list(oj$week), mean)
+plot(meanweeklyprice$Group.1,meanweeklyprice$x,type="l",col="green",
+     xlab = "Week",ylab="meanweeklyprice")
+
+```
+
+#Extract the mean weekly price of orange juice sold each week according to each brand. 
+
+##Method 1: using aggregate()
+```{r}
+mean_weekly_brand_price <- aggregate(oj[ ,6], list(Brand=oj$brand,Week=oj$week), mean)
+#mean_weekly_brand_price  #Uncomment this to view full data frame
+head(mean_weekly_brand_price)
+```
+##Method :2 using tapply()
+```{r}
+weekly_brand_price<-tapply(oj$price,list(Week=oj$week,oj$brand),FUN=mean,na.rm=TRUE)
+#weekly_brand_price  #Uncomment this to view full data frame
+head(weekly_brand_price)
+```
+
+#Create a plot which compares the mean weekly price of orange juice for all brands versus each individual brand.
+```{r results='hide', message=FALSE, warning=FALSE}
+weekly_brand_price<-tapply(oj$price,list(Week=oj$week,oj$brand),FUN=mean,na.rm=TRUE)
+allbrand <- tapply(oj$price,list(Week=oj$week),FUN=mean,na.rm=TRUE)
+df <- cbind(allbrand,weekly_brand_price)
+write.table(df, file = 'q13.csv',sep = ",",row.names = T)
+library(readr)
+q13 <- read_csv("E:/Smurfit/Semester 2/DM/R/Data-Mining/q13.csv",col_names = FALSE, skip = 1)
+ggplot(q13, aes(q13$X1),pch=21) + 
+  geom_line(aes(y = q13$X2, colour = "All Brand")) + 
+  geom_line(aes(y = q13$X3, colour = "Dominicks")) + 
+  geom_line(aes(y = q13$X4, colour = "Minute Maid")) + 
+  geom_line(aes(y = q13$X5, colour = "Tropicana")) + xlab("Week") +ylab("Price")+
+  ggtitle("Weekly price of Orange Juice for All Brands vs Individual Brand")
+```
+
+#When there is an advertising campaign for orange juice does it impact on the number of units sold? 
+
+Yes, more number of units sold when there is an advertising campaign
+```{r}
+adcap <- factor(oj$feat)
+tapply(oj$logmove,adcap,FUN=mean,na.rm=TRUE)
+```
+
+#Can you create a line plot of the mean weekly units sold without a promotion overlayed with the mean weekly units sold with a promotion? What is interesting about this plot
+With a promotion more number of units sold as compared to campaign without a promotion
+
+```{r  message=FALSE, warning=FALSE}
+unitsold<-tapply(oj$logmove,list(oj$week),FUN=mean,na.rm=TRUE)
+head(unitsold)
+sold <- tapply(oj$logmove,list(Week=oj$week,oj$feat),FUN=mean,na.rm=TRUE)
+df <- cbind(sold)
+write.table(df, file = 'q15.csv',sep = ",",row.names = T)
+library(readr)
+q15 <- read_csv("E:/Smurfit/Semester 2/DM/R/Data-Mining/q15.csv",col_names = FALSE, skip = 1)
+ggplot(q15, aes(q13$X1,xlab="Week")) + 
+  geom_line(aes(y = q13$X2, colour = "With promotion")) + 
+  geom_line(aes(y = q13$X3, colour = "Without promotion"))+ xlab("Week") +ylab("Units Sold")+
+  ggtitle("Mean weekly units sold with a promotion vs without promotion") 
+```
+
+
+#Descriptive Analytics
+Consider the demographic and competitive variables1. Using descriptive analytics are there patterns you can observe that might suggest the potential for profiling individual stores or customers, which might then be used for marketing purposes?
+
+## Answer: Yes, there are patterns among demographics variables, which can be use for marketing of orange juice at given stores.
+
+1. Data Cleaning: This help in identifying and removing duplicate records along with outlier, which might diverge business decision.
+
+2. Descriptive Analytics: Using this one understand the behaviour, size, and range etc about data points.
+
+3. Correlations: One can use highly correlated variables into account while forming a new marketing strategy. Such as, in given data, EDUC and HVAL150 are very much related to each other, this give us an insight that potential customer who are well educated also lives in an expensive house and vice verse. Similarly, HVAL150, INCOME and EDUC also correlated with each other. 
+
+4. Distribution: By plotting probability distribution of chart, one can figure out the probability of future business decision outcome.
+
+5. Store Rating: Using statistical analysis, one can identify the best and worst store, also can rate each store depending on units sold by them. It is found that store 75 is poorest and store 62 is the wealthiest store among 83 stores.
+
+6. Linear Models: By generating linear models of each variable, one can analysis the trend of data, which will help in forecasting future trend as well.
+
+## Overview
+
+Actual data contains 28947 observations and 12 variables for demographic data.
+```{r}
+d1 <-(oj[c(1,7:17)])
+dim(d1)
+```
+
+On analysing the data, it is found that, there were only 83 unique records out of 28947 obsservations. Therefore, data should be cleaned before performing any further descriptive analytics.
+```{r}
+d2 <- unique(oj[c(1,7:17)])
+dim(d2)
+```
+
+
+##Descriptive Analytics Summary for demographic data
+This analysis will help one to understand the data, how it is distrbuted and how many observations are there etc.
+```{r}
+oj_subset <- unique(oj[c(1,7:17)])
+oj_stats <- do.call(data.frame, 
+           list(Mean = apply(oj_subset, 2, mean),
+                Std_Dev = apply(oj_subset, 2, sd),
+                Median = apply(oj_subset, 2, median),
+                Min = apply(oj_subset, 2, min),
+                Max = apply(oj_subset, 2, max),
+                N = apply(oj_subset, 2, length)))
+oj_stats
+stats_data =apply(as.matrix(oj_subset),2,quantile)
+cat("Statisical Summary of Orange Juice Data",fill=TRUE)
+print(stats_data)
+```
+
+##Scatter Plot Matrices in R
+
+###Analysis of Correlation among demographics variables. 
+
+The closer correlation coeff(r) is to +1 or -1, the more closely the two variables are related. If r is close to 0, it means there is no relationship between the variables. Below are few sample correlated variables.
+
+#### 1. Positive Correlations:
+        1. EDUC ~ CPWVOL5
+        2. WORKWOM ~ CPWVOL5
+        3. EDUC ~ WORKWOM
+        4. EDUC ~ HVAL150
+        5. WORKWOM ~ HVAL150
+        6. SSTRDIST ~ SSTRVOL
+        
+#### 1. Negative Correlations:
+        1. EDUC ~ CPWVOL5
+        2. WORKWOM ~ CPWVOL5
+        3. EDUC ~ WORKWOM
+        4. EDUC ~ HVAL150
+        5. WORKWOM ~ HVAL150
+        6. EUDC ~ AGE60
+        7. EDUC ~ ETHNIC
+        8. INCOME ~ ETHNIC
+        9. INCOME ~ HHLARGE
+        10.WORKWOM ~ HHLARGE
+        11. HVAL150 ~ SSTRDIST
+        12. SSTRVOL ~ CPDIST5
+
+EDUC and HVAL150 are highly correlated with each other, having r = 0.89 and p <= 0.01. This signifies that educated people having house which has value more than $150,000.
+
+```{r}
+#Scatter Plot to find correlation among demographics variables
+pairs(oj_subset[,-1],col="blue",pch=20)
+
+#Reference: https://www.r-bloggers.com/scatter-plot-matrices-in-r/
+
+
+#Scatter Plot with Correlation and P Value
+panel.cor <- function(x, y, digits = 2, cex.cor=.8, ...)
+{ 
+  
+  #Plotting Regression Line
+  reg1 <- lm(x~y)
+  abline(reg1,col = "gray60")
+  
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  # correlation coefficient
+  r <- cor(x, y)
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste("r= ", txt, sep = "")
+  text(0.5, 0.6, txt)
+
+  # p-value calculation
+  p <- cor.test(x, y)$p.value
+  txt2 <- format(c(p, 0.123456789), digits = digits)[1]
+  txt2 <- paste("p= ", txt2, sep = "")
+  if(p<0.01) txt2 <- paste("p= ", "<0.01", sep = "") 
+  text(0.5, 0.4, txt2)
+}
+
+pairs(oj_subset[,-1], upper.panel = panel.cor,col="blue",pch=20)
+library(s20x)
+pairs20x(oj_subset[,-1])
+```
+## Boxplot and Histogram for Data Analysis
+
+With the help of Boxplot, one is able to identify any outliers in the data, thereafter histogram plots help in checking the distribution of data, i.e whether data is normally distributed or not.
+
+Also, the p-values of the variable greater than 0.05, suggests that there is no strong evidence to reject the null hypothesis that is orange juice variables data are normally distributed.
+
+1. EDUC, ETHNNIC, INCOME, HHLARGE, SSTRDIST, CPDIST5 and CPWVOL5 has outliers
+```{r results='hide', message=F, warning=F}
+par(mfrow = c(2, 4))
+varlist <- names(oj_subset)[2:12]
+box_hist_plot<-function(index) {
+  boxplot(oj_subset[,index], main=names(oj_subset[index]),pch=16)
+  hist(oj_subset[,index],main=names(oj_subset[index]),xlab=names(oj_subset[index]),prob=T)
+  lines(density(oj_subset[,index]),lty="dashed",lwd=2.5,col="red")
+  }
+lapply(2:12,FUN=box_hist_plot)
+
+```
+## Wealthiest Store and Poorest Store Analysis
+
+```{r}
+##Reference: Data Mining and Business Analytics with R Book by Johannes Ledolter
+library(lattice)
+par(mfrow = c(1, 2))
+t21=tapply(oj$INCOME,oj$store,FUN=mean,na.rm=TRUE)
+t21[t21==max(t21)]
+t21[t21==min(t21)]
+print(t21[t21==min(t21)])
+oj1=oj[oj$store == 62,]
+oj2=oj[oj$store == 75,]
+oj3=rbind(oj1,oj2)
+xyplot(logmove~price|store,data=oj3,main="Store in the Wealthiest neighborhood")
+xyplot(logmove~price|store,groups=feat,data=oj3,main="Store in the poorest neighborhood")
+## store in the wealthiest neighborhood
+mhigh=lm(logmove~price,data=oj1)
+summary(mhigh)
+plot(logmove~price,data=oj1,xlim=c(0,4),ylim=c(0,13),main="62 Wealthiest Store")
+abline(mhigh)
+## store in the poorest neighborhood
+mlow=lm(logmove~price,data=oj2)
+summary(mlow)
+plot(logmove~price,data=oj2,xlim=c(0,4),ylim=c(0,13),main="75= Poorest Store")
+abline(mlow)
+```
+# Linear Regression Models
+
+[Reference UCLA.EDU](http://www.ats.ucla.edu/stat/r/pages/looping_strings.htm)
+
+```{r}
+#Reference: http://www.ats.ucla.edu/stat/r/pages/looping_strings.htm
+
+varlist <- names(oj_subset)[2:12]
+models <- lapply(varlist, function(x) {
+    lm(substitute(store ~ i, list(i = as.name(x))), data = oj_subset)
+})
+par(mfrow = c(2, 2))
+invisible(lapply(models, plot))
+```
+ 
